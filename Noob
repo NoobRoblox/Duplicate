@@ -1,14 +1,15 @@
---// GUI DUPE Progress by ChatGPT
---// Tương thích mọi executor (SAB, Fluxus, Synapse X, v.v.)
+--// Script GUI DUPE DELUXE by ChatGPT
+--// Tương thích SAB, Fluxus, Synapse X, Evon...
+--// Tính năng: Giao diện bo góc, DUPE progress, hiệu ứng sáng tím, âm thanh hoàn tất, di chuyển ngẫu nhiên
 
-local TweenService = game:GetService("TweenService")
-
--- Xóa GUI cũ (nếu có)
+-- Xóa GUI cũ
 if game.CoreGui:FindFirstChild("DupeUI") then
 	game.CoreGui.DupeUI:Destroy()
 end
 
--- Tạo GUI
+local TweenService = game:GetService("TweenService")
+
+-- GUI chính
 local gui = Instance.new("ScreenGui")
 gui.Name = "DupeUI"
 gui.ResetOnSpawn = false
@@ -16,81 +17,153 @@ gui.Parent = game.CoreGui
 
 -- Khung chính
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 300, 0, 150)
-main.Position = UDim2.new(0.5, -150, 0.5, -75)
+main.Size = UDim2.new(0, 300, 0, 160)
+main.Position = UDim2.new(0.5, -150, 0.5, -80)
 main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-main.BorderSizePixel = 2
-main.BorderColor3 = Color3.fromRGB(170, 0, 255)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
 main.Parent = gui
+
+-- Hiệu ứng phát sáng viền tím
+local glow = Instance.new("ImageLabel")
+glow.Parent = main
+glow.Size = UDim2.new(1, 40, 1, 40)
+glow.Position = UDim2.new(-0.07, 0, -0.07, 0)
+glow.BackgroundTransparency = 1
+glow.Image = "rbxassetid://5028857084" -- hiệu ứng ánh sáng mờ
+glow.ImageColor3 = Color3.fromRGB(170, 0, 255)
+glow.ImageTransparency = 0.3
+glow.ZIndex = 0
 
 -- Bo góc
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 45)
+corner.CornerRadius = UDim.new(0, 30)
 corner.Parent = main
 
+-- Tiêu đề
+local title = Instance.new("TextLabel")
+title.Parent = main
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "NoobRoblox"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 24
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextYAlignment = Enum.TextYAlignment.Center
+
 -- Nút DUPE
-local button = Instance.new("TextButton")
-button.Parent = main
-button.Size = UDim2.new(0, 120, 0, 50)
-button.Position = UDim2.new(0.5, -60, 0.5, -25)
-button.BackgroundColor3 = Color3.fromRGB(60, 0, 120)
-button.Text = "DUPE"
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.Font = Enum.Font.GothamBold
-button.TextSize = 22
-Instance.new("UICorner", button).CornerRadius = UDim.new(0, 12)
+local dupeBtn = Instance.new("TextButton")
+dupeBtn.Parent = main
+dupeBtn.Size = UDim2.new(0, 120, 0, 50)
+dupeBtn.Position = UDim2.new(0.5, -60, 0.5, -10)
+dupeBtn.BackgroundColor3 = Color3.fromRGB(60, 0, 120)
+dupeBtn.Text = "DUPE"
+dupeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+dupeBtn.Font = Enum.Font.GothamBold
+dupeBtn.TextSize = 22
+Instance.new("UICorner", dupeBtn).CornerRadius = UDim.new(0, 12)
 
 -- Thanh tiến trình
 local progressBar = Instance.new("Frame")
 progressBar.Parent = main
 progressBar.Size = UDim2.new(0, 220, 0, 20)
-progressBar.Position = UDim2.new(0.5, -110, 1, -40)
+progressBar.Position = UDim2.new(0.5, -110, 1, -35)
 progressBar.BackgroundColor3 = Color3.fromRGB(30, 0, 60)
 progressBar.Visible = false
 Instance.new("UICorner", progressBar).CornerRadius = UDim.new(0, 10)
 
--- Phần đầy tiến trình
 local fill = Instance.new("Frame")
 fill.Parent = progressBar
 fill.Size = UDim2.new(0, 0, 1, 0)
 fill.BackgroundColor3 = Color3.fromRGB(180, 0, 255)
 Instance.new("UICorner", fill).CornerRadius = UDim.new(0, 10)
 
--- Text hiển thị %
 local percentLabel = Instance.new("TextLabel")
 percentLabel.Parent = main
-percentLabel.Size = UDim2.new(1, 0, 0, 30)
-percentLabel.Position = UDim2.new(0, 0, 1, -70)
+percentLabel.Size = UDim2.new(1, 0, 0, 25)
+percentLabel.Position = UDim2.new(0, 0, 1, -60)
 percentLabel.BackgroundTransparency = 1
 percentLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 percentLabel.Font = Enum.Font.Gotham
 percentLabel.TextSize = 18
 percentLabel.Text = ""
 
--- Chức năng nút
-button.MouseButton1Click:Connect(function()
+-- Nút tròn có thể gắn ảnh của bạn
+local circleBtn = Instance.new("ImageButton")
+circleBtn.Parent = main
+circleBtn.Size = UDim2.new(0, 35, 0, 35)
+circleBtn.Position = UDim2.new(1, -45, 0, 10)
+circleBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 80)
+circleBtn.Image = "rbxassetid://137566338679153" -- 🔸 Thay YOUR_IMAGE_ID_HERE bằng ID ảnh Roblox của bạn
+Instance.new("UICorner", circleBtn).CornerRadius = UDim.new(1, 0)
+
+-- Hiệu ứng sáng xoay nhẹ quanh glow
+task.spawn(function()
+	while task.wait(0.05) do
+		glow.Rotation = glow.Rotation + 0.5
+	end
+end)
+
+-- Âm thanh “ding” khi hoàn tất
+local dingSound = Instance.new("Sound")
+dingSound.Parent = main
+dingSound.SoundId = "rbxassetid://9118823102" -- âm thanh nhẹ "ding"
+dingSound.Volume = 1
+
+-- Nút đóng/mở GUI
+local minimized = false
+circleBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 40, 0, 40)}):Play()
+		for _, v in pairs(main:GetChildren()) do
+			if v ~= circleBtn and v ~= corner and v ~= glow then
+				v.Visible = false
+			end
+		end
+	else
+		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 300, 0, 160)}):Play()
+		task.wait(0.4)
+		for _, v in pairs(main:GetChildren()) do
+			if v ~= circleBtn and v ~= corner and v ~= glow then
+				v.Visible = true
+			end
+		end
+	end
+end)
+
+-- Nút DUPE hoạt động
+dupeBtn.MouseButton1Click:Connect(function()
 	if progressBar.Visible then return end
 	progressBar.Visible = true
 	fill.Size = UDim2.new(0, 0, 1, 0)
 	percentLabel.Text = "0%"
-	
-	local progress = 0
-	local startTime = tick()
 
+	local progress = 0
 	while progress < 100 do
 		task.wait(math.random(0.2, 0.6))
 		local step = math.random(3, 8)
 		progress = math.clamp(progress + step, 0, 100)
-
-		TweenService:Create(fill, TweenInfo.new(0.3), {
-			Size = UDim2.new(progress/100, 0, 1, 0)
-		}):Play()
-
+		TweenService:Create(fill, TweenInfo.new(0.3), {Size = UDim2.new(progress/100, 0, 1, 0)}):Play()
 		percentLabel.Text = progress .. "%"
 	end
 
-	-- Giữ nguyên 15 giây sau khi hoàn thành
+	dingSound:Play() -- phát âm thanh khi hoàn tất
 	task.wait(15)
 	progressBar.Visible = false
 	percentLabel.Text = ""
+end)
+
+-- Giao diện di chuyển ngẫu nhiên
+task.spawn(function()
+	while task.wait(3) do
+		if not minimized then
+			local randomX = math.random(50, 600)
+			local randomY = math.random(50, 300)
+			TweenService:Create(main, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+				Position = UDim2.new(0, randomX, 0, randomY)
+			}):Play()
+		end
+	end
 end)
