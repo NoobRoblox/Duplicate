@@ -1,13 +1,13 @@
---// Script GUI DUPE DELUXE by ChatGPT
---// Tương thích SAB, Fluxus, Synapse X, Evon...
---// Tính năng: Giao diện bo góc, DUPE progress, hiệu ứng sáng tím, âm thanh hoàn tất, di chuyển ngẫu nhiên
+--// DUPE GUI FINAL ULTRA DELUXE - Free Move Edition by ChatGPT
+--// Hiệu ứng: Aura xoay, Particle tím, Tiến trình 0–100%, Âm thanh, Di chuyển tự do.
 
--- Xóa GUI cũ
 if game.CoreGui:FindFirstChild("DupeUI") then
 	game.CoreGui.DupeUI:Destroy()
 end
 
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 -- GUI chính
 local gui = Instance.new("ScreenGui")
@@ -17,33 +17,29 @@ gui.Parent = game.CoreGui
 
 -- Khung chính
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 300, 0, 160)
-main.Position = UDim2.new(0.5, -150, 0.5, -80)
+main.Size = UDim2.new(0, 300, 0, 170)
+main.Position = UDim2.new(0.5, -150, 0.5, -85)
 main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 main.BorderSizePixel = 0
 main.Active = true
-main.Draggable = true
+main.Draggable = false -- Tự code drag mượt
 main.Parent = gui
 
--- Hiệu ứng phát sáng viền tím
-local glow = Instance.new("ImageLabel")
-glow.Parent = main
-glow.Size = UDim2.new(1, 40, 1, 40)
-glow.Position = UDim2.new(-0.07, 0, -0.07, 0)
+-- Bo góc
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 30)
+
+-- Viền phát sáng tím
+local glow = Instance.new("ImageLabel", main)
+glow.Size = UDim2.new(1, 60, 1, 60)
+glow.Position = UDim2.new(-0.1, 0, -0.1, 0)
 glow.BackgroundTransparency = 1
-glow.Image = "rbxassetid://5028857084" -- hiệu ứng ánh sáng mờ
+glow.Image = "rbxassetid://5028857084"
 glow.ImageColor3 = Color3.fromRGB(170, 0, 255)
-glow.ImageTransparency = 0.3
+glow.ImageTransparency = 0.35
 glow.ZIndex = 0
 
--- Bo góc
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 30)
-corner.Parent = main
-
 -- Tiêu đề
-local title = Instance.new("TextLabel")
-title.Parent = main
+local title = Instance.new("TextLabel", main)
 title.Size = UDim2.new(1, 0, 0, 40)
 title.BackgroundTransparency = 1
 title.Text = "NoobRoblox"
@@ -53,8 +49,7 @@ title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextYAlignment = Enum.TextYAlignment.Center
 
 -- Nút DUPE
-local dupeBtn = Instance.new("TextButton")
-dupeBtn.Parent = main
+local dupeBtn = Instance.new("TextButton", main)
 dupeBtn.Size = UDim2.new(0, 120, 0, 50)
 dupeBtn.Position = UDim2.new(0.5, -60, 0.5, -10)
 dupeBtn.BackgroundColor3 = Color3.fromRGB(60, 0, 120)
@@ -64,23 +59,30 @@ dupeBtn.Font = Enum.Font.GothamBold
 dupeBtn.TextSize = 22
 Instance.new("UICorner", dupeBtn).CornerRadius = UDim.new(0, 12)
 
+-- Aura xoay quanh nút DUPE
+local aura = Instance.new("ImageLabel", dupeBtn)
+aura.Size = UDim2.new(1.8, 0, 1.8, 0)
+aura.Position = UDim2.new(-0.4, 0, -0.4, 0)
+aura.BackgroundTransparency = 1
+aura.Image = "rbxassetid://5028857084"
+aura.ImageColor3 = Color3.fromRGB(170, 0, 255)
+aura.ImageTransparency = 0.4
+aura.ZIndex = 0
+
 -- Thanh tiến trình
-local progressBar = Instance.new("Frame")
-progressBar.Parent = main
+local progressBar = Instance.new("Frame", main)
 progressBar.Size = UDim2.new(0, 220, 0, 20)
 progressBar.Position = UDim2.new(0.5, -110, 1, -35)
 progressBar.BackgroundColor3 = Color3.fromRGB(30, 0, 60)
 progressBar.Visible = false
 Instance.new("UICorner", progressBar).CornerRadius = UDim.new(0, 10)
 
-local fill = Instance.new("Frame")
-fill.Parent = progressBar
+local fill = Instance.new("Frame", progressBar)
 fill.Size = UDim2.new(0, 0, 1, 0)
 fill.BackgroundColor3 = Color3.fromRGB(180, 0, 255)
 Instance.new("UICorner", fill).CornerRadius = UDim.new(0, 10)
 
-local percentLabel = Instance.new("TextLabel")
-percentLabel.Parent = main
+local percentLabel = Instance.new("TextLabel", main)
 percentLabel.Size = UDim2.new(1, 0, 0, 25)
 percentLabel.Position = UDim2.new(0, 0, 1, -60)
 percentLabel.BackgroundTransparency = 1
@@ -89,51 +91,63 @@ percentLabel.Font = Enum.Font.Gotham
 percentLabel.TextSize = 18
 percentLabel.Text = ""
 
--- Nút tròn có thể gắn ảnh của bạn
-local circleBtn = Instance.new("ImageButton")
-circleBtn.Parent = main
+-- Nút tròn đóng/mở có ảnh
+local circleBtn = Instance.new("ImageButton", main)
 circleBtn.Size = UDim2.new(0, 35, 0, 35)
 circleBtn.Position = UDim2.new(1, -45, 0, 10)
 circleBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 80)
-circleBtn.Image = "rbxassetid://137566338679153" -- 🔸 Thay YOUR_IMAGE_ID_HERE bằng ID ảnh Roblox của bạn
+circleBtn.Image = "rbxassetid://YOUR_IMAGE_ID_HERE" -- Thay bằng ID ảnh của bạn
 Instance.new("UICorner", circleBtn).CornerRadius = UDim.new(1, 0)
 
--- Hiệu ứng sáng xoay nhẹ quanh glow
+-- Âm thanh khi hoàn tất
+local dingSound = Instance.new("Sound", main)
+dingSound.SoundId = "rbxassetid://9118823102"
+dingSound.Volume = 1
+
+-- Particle quanh nút DUPE
+local particle = Instance.new("ParticleEmitter", dupeBtn)
+particle.Texture = "rbxassetid://10591451250"
+particle.Lifetime = NumberRange.new(1, 2)
+particle.Rate = 10
+particle.Speed = NumberRange.new(5, 15)
+particle.Rotation = NumberRange.new(0, 360)
+particle.RotSpeed = NumberRange.new(-100, 100)
+particle.Color = ColorSequence.new(Color3.fromRGB(200, 0, 255))
+particle.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.3), NumberSequenceKeypoint.new(1, 0)})
+particle.LightEmission = 0.8
+particle.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.2), NumberSequenceKeypoint.new(1, 1)})
+
+-- Xoay aura
 task.spawn(function()
-	while task.wait(0.05) do
+	while task.wait(0.03) do
+		aura.Rotation = aura.Rotation + 0.8
 		glow.Rotation = glow.Rotation + 0.5
 	end
 end)
-
--- Âm thanh “ding” khi hoàn tất
-local dingSound = Instance.new("Sound")
-dingSound.Parent = main
-dingSound.SoundId = "rbxassetid://9118823102" -- âm thanh nhẹ "ding"
-dingSound.Volume = 1
 
 -- Nút đóng/mở GUI
 local minimized = false
 circleBtn.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	if minimized then
-		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 40, 0, 40)}):Play()
+		TweenService:Create(main, TweenInfo.new(0.4), {Size = UDim2.new(0, 40, 0, 40)}):Play()
 		for _, v in pairs(main:GetChildren()) do
-			if v ~= circleBtn and v ~= corner and v ~= glow then
+			if v ~= circleBtn and v ~= glow then
 				v.Visible = false
 			end
 		end
 	else
-		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 300, 0, 160)}):Play()
+		TweenService:Create(main, TweenInfo.new(0.4), {Size = UDim2.new(0, 300, 0, 170)}):Play()
 		task.wait(0.4)
 		for _, v in pairs(main:GetChildren()) do
-			if v ~= circleBtn and v ~= corner and v ~= glow then
+			if v ~= circleBtn and v ~= glow then
 				v.Visible = true
 			end
 		end
 	end
 end)
 
--- Nút DUPE hoạt động
+-- DUPE hoạt động
 dupeBtn.MouseButton1Click:Connect(function()
 	if progressBar.Visible then return end
 	progressBar.Visible = true
@@ -149,21 +163,241 @@ dupeBtn.MouseButton1Click:Connect(function()
 		percentLabel.Text = progress .. "%"
 	end
 
-	dingSound:Play() -- phát âm thanh khi hoàn tất
+	dingSound:Play()
 	task.wait(15)
 	progressBar.Visible = false
 	percentLabel.Text = ""
 end)
 
--- Giao diện di chuyển ngẫu nhiên
+-- Tính năng KÉO THẢ TỰ DO (Free Move)
+do
+	local dragging, dragInput, dragStart, startPos
+	local function update(input)
+		local delta = input.Position - dragStart
+		main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+
+	main.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = main.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+--// DUPE GUI FINAL ULTRA DELUXE - Free Move Edition by ChatGPT
+--// Hiệu ứng: Aura xoay, Particle tím, Tiến trình 0–100%, Âm thanh, Di chuyển tự do.
+
+if game.CoreGui:FindFirstChild("DupeUI") then
+	game.CoreGui.DupeUI:Destroy()
+end
+
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+-- GUI chính
+local gui = Instance.new("ScreenGui")
+gui.Name = "DupeUI"
+gui.ResetOnSpawn = false
+gui.Parent = game.CoreGui
+
+-- Khung chính
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 300, 0, 170)
+main.Position = UDim2.new(0.5, -150, 0.5, -85)
+main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = false -- Tự code drag mượt
+main.Parent = gui
+
+-- Bo góc
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 30)
+
+-- Viền phát sáng tím
+local glow = Instance.new("ImageLabel", main)
+glow.Size = UDim2.new(1, 60, 1, 60)
+glow.Position = UDim2.new(-0.1, 0, -0.1, 0)
+glow.BackgroundTransparency = 1
+glow.Image = "rbxassetid://5028857084"
+glow.ImageColor3 = Color3.fromRGB(170, 0, 255)
+glow.ImageTransparency = 0.35
+glow.ZIndex = 0
+
+-- Tiêu đề
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "NoobRoblox"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 24
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextYAlignment = Enum.TextYAlignment.Center
+
+-- Nút DUPE
+local dupeBtn = Instance.new("TextButton", main)
+dupeBtn.Size = UDim2.new(0, 120, 0, 50)
+dupeBtn.Position = UDim2.new(0.5, -60, 0.5, -10)
+dupeBtn.BackgroundColor3 = Color3.fromRGB(60, 0, 120)
+dupeBtn.Text = "DUPE"
+dupeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+dupeBtn.Font = Enum.Font.GothamBold
+dupeBtn.TextSize = 22
+Instance.new("UICorner", dupeBtn).CornerRadius = UDim.new(0, 12)
+
+-- Aura xoay quanh nút DUPE
+local aura = Instance.new("ImageLabel", dupeBtn)
+aura.Size = UDim2.new(1.8, 0, 1.8, 0)
+aura.Position = UDim2.new(-0.4, 0, -0.4, 0)
+aura.BackgroundTransparency = 1
+aura.Image = "rbxassetid://5028857084"
+aura.ImageColor3 = Color3.fromRGB(170, 0, 255)
+aura.ImageTransparency = 0.4
+aura.ZIndex = 0
+
+-- Thanh tiến trình
+local progressBar = Instance.new("Frame", main)
+progressBar.Size = UDim2.new(0, 220, 0, 20)
+progressBar.Position = UDim2.new(0.5, -110, 1, -35)
+progressBar.BackgroundColor3 = Color3.fromRGB(30, 0, 60)
+progressBar.Visible = false
+Instance.new("UICorner", progressBar).CornerRadius = UDim.new(0, 10)
+
+local fill = Instance.new("Frame", progressBar)
+fill.Size = UDim2.new(0, 0, 1, 0)
+fill.BackgroundColor3 = Color3.fromRGB(180, 0, 255)
+Instance.new("UICorner", fill).CornerRadius = UDim.new(0, 10)
+
+local percentLabel = Instance.new("TextLabel", main)
+percentLabel.Size = UDim2.new(1, 0, 0, 25)
+percentLabel.Position = UDim2.new(0, 0, 1, -60)
+percentLabel.BackgroundTransparency = 1
+percentLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+percentLabel.Font = Enum.Font.Gotham
+percentLabel.TextSize = 18
+percentLabel.Text = ""
+
+-- Nút tròn đóng/mở có ảnh
+local circleBtn = Instance.new("ImageButton", main)
+circleBtn.Size = UDim2.new(0, 35, 0, 35)
+circleBtn.Position = UDim2.new(1, -45, 0, 10)
+circleBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 80)
+circleBtn.Image = "rbxassetid://YOUR_IMAGE_ID_HERE" -- Thay bằng ID ảnh của bạn
+Instance.new("UICorner", circleBtn).CornerRadius = UDim.new(1, 0)
+
+-- Âm thanh khi hoàn tất
+local dingSound = Instance.new("Sound", main)
+dingSound.SoundId = "rbxassetid://9118823102"
+dingSound.Volume = 1
+
+-- Particle quanh nút DUPE
+local particle = Instance.new("ParticleEmitter", dupeBtn)
+particle.Texture = "rbxassetid://10591451250"
+particle.Lifetime = NumberRange.new(1, 2)
+particle.Rate = 10
+particle.Speed = NumberRange.new(5, 15)
+particle.Rotation = NumberRange.new(0, 360)
+particle.RotSpeed = NumberRange.new(-100, 100)
+particle.Color = ColorSequence.new(Color3.fromRGB(200, 0, 255))
+particle.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.3), NumberSequenceKeypoint.new(1, 0)})
+particle.LightEmission = 0.8
+particle.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.2), NumberSequenceKeypoint.new(1, 1)})
+
+-- Xoay aura
 task.spawn(function()
-	while task.wait(3) do
-		if not minimized then
-			local randomX = math.random(50, 600)
-			local randomY = math.random(50, 300)
-			TweenService:Create(main, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-				Position = UDim2.new(0, randomX, 0, randomY)
-			}):Play()
+	while task.wait(0.03) do
+		aura.Rotation = aura.Rotation + 0.8
+		glow.Rotation = glow.Rotation + 0.5
+	end
+end)
+
+-- Nút đóng/mở GUI
+local minimized = false
+circleBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		TweenService:Create(main, TweenInfo.new(0.4), {Size = UDim2.new(0, 40, 0, 40)}):Play()
+		for _, v in pairs(main:GetChildren()) do
+			if v ~= circleBtn and v ~= glow then
+				v.Visible = false
+			end
+		end
+	else
+		TweenService:Create(main, TweenInfo.new(0.4), {Size = UDim2.new(0, 300, 0, 170)}):Play()
+		task.wait(0.4)
+		for _, v in pairs(main:GetChildren()) do
+			if v ~= circleBtn and v ~= glow then
+				v.Visible = true
+			end
 		end
 	end
 end)
+
+-- DUPE hoạt động
+dupeBtn.MouseButton1Click:Connect(function()
+	if progressBar.Visible then return end
+	progressBar.Visible = true
+	fill.Size = UDim2.new(0, 0, 1, 0)
+	percentLabel.Text = "0%"
+
+	local progress = 0
+	while progress < 100 do
+		task.wait(math.random(0.2, 0.6))
+		local step = math.random(3, 8)
+		progress = math.clamp(progress + step, 0, 100)
+		TweenService:Create(fill, TweenInfo.new(0.3), {Size = UDim2.new(progress/100, 0, 1, 0)}):Play()
+		percentLabel.Text = progress .. "%"
+	end
+
+	dingSound:Play()
+	task.wait(15)
+	progressBar.Visible = false
+	percentLabel.Text = ""
+end)
+
+-- Tính năng KÉO THẢ TỰ DO (Free Move)
+do
+	local dragging, dragInput, dragStart, startPos
+	local function update(input)
+		local delta = input.Position - dragStart
+		main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+
+	main.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = main.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	main.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+end
