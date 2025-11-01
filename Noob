@@ -106,7 +106,7 @@ dingSound.Volume = 1
 
 -- Particle quanh nút DUPE
 local particle = Instance.new("ParticleEmitter", dupeBtn)
-particle.Texture = "rbxassetid://10591451250"
+particle.Texture = "rbxassetid://137566338679153"
 particle.Lifetime = NumberRange.new(1, 2)
 particle.Rate = 10
 particle.Speed = NumberRange.new(5, 15)
